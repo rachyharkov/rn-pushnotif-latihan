@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Platform, StyleSheet, Text, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
@@ -16,9 +16,39 @@ Notifications.setNotificationHandler({
 export default function App() {
 
   useEffect(() => {
-    Notifications.getExpoPushTokenAsync().then(pushTokenData => {
-      console.log('Push Token: ' + pushTokenData)
-    })
+    async function configurePushNotifications() {
+      const { status } = await Notifications.getPermissionsAsync()
+      let finalStatus = status
+
+      if(finalStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync()
+        finalStatus = status
+      }
+
+      if(finalStatus !== 'granted') {
+        alert(
+          'Tidak dapat mengakses notifikasi',
+          'Push notifications need the appropriate permissions to be granted',
+          [{text: 'Okay'}]
+        )
+        return
+      }
+
+      // buwat get pushToken 
+      const pushTokenData = await Notifications.getExpoPushTokenAsync()
+      console.log(pushTokenData)
+    }
+
+    if(Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C'
+      })
+    }
+
+    configurePushNotifications()
   },[])
 
   useEffect(() => {
@@ -62,10 +92,28 @@ export default function App() {
     })
   }
 
+  function sendPushNotificationHandler() {
+    fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip, deflate',
+      },
+      body: JSON.stringify({
+        to: 'ExponentPushToken[xxxxxxxxxxxxxxxx]',
+        title: 'Makan Tomat Sambil duduk di Bangku',
+        data: { extraData: 'Ini adalah data tambahan' },
+        body: 'Ini adalah notifikasi push pertama AQ!!!'
+      })
+    })
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Button title='Schedule Notification' onPress={scheduleNotificationHandler}/>
+      <Button title='Send Push Notification' onPress={sendPushNotificationHandler}/>
     </View>
   );
 }
