@@ -17,15 +17,24 @@ export default function App() {
 
   useEffect(() => {
     
-    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+    const subscription1 = Notifications.addNotificationReceivedListener((notification) => {
       console.log('Notification Received')
       console.log(notification)
       const userName = notification.request.content.data.username
       console.log('Test ambil data: ' + userName)
     })
 
+    // Kalau mau mengambil response user dari notifikasinya
+    const subscription2 = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('Notification Response Received')
+      console.log(response)
+      const userName = response.notification.request.content.data.username
+      console.log('Yang respon adalah: ' + userName)
+    })
+
     return () => {
-      subscription.remove()
+      subscription1.remove()
+      subscription2.remove()
     }
 
 
