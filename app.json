@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-pushnotif-latihan",
+    "name": "RN PushNotif Latihan",
     "slug": "rn-pushnotif-latihan",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -35,9 +35,7 @@
         {
           "icon": "./assets/notification-icon.png",
           "color": "#ffffff",
-          "sounds": [
-            "./local/assets/iphone_notification.mp3"
-          ]
+          "sounds": "./assets/iphone_notification.mp3"
         }
       ]
     ]

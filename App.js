@@ -21,11 +21,12 @@ export default function App() {
         body: 'Ini adalah notifikasi lokal pertama aq',
         data: {
           username: 'Aq'
-        },
-        trigger: {
-          seconds: 2
         }
+      },
+      trigger: {
+        seconds: 2
       }
+
     })
   }
 
